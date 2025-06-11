@@ -2,7 +2,7 @@
 	"name": "@serendipityai/markdown2pdf-mcp",
 	"displayName": "Markdown to PDF MCP Server from markdown2pdf.ai",
 	"description": "Model Context Protocol server for converting markdown to PDF with Lightning payments",
-	"version": "0.0.9",
+	"version": "0.1.0",
 	"homepage": "https://markdown2pdf.ai",
 	"repository": "github:serendipity-ai/markdown2pdf-mcp",
 	"private": false,
