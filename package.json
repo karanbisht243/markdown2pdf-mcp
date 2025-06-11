@@ -1,0 +1,54 @@
+{
+	"name": "@serendipityai/markdown2pdf-mcp",
+	"displayName": "Markdown to PDF MCP Server from markdown2pdf.ai",
+	"description": "Model Context Protocol server for converting markdown to PDF with Lightning payments",
+	"version": "0.0.5",
+	"homepage": "https://markdown2pdf.ai",
+	"private": false,
+	"files":[
+		"dist"
+	],
+	"keywords": [
+		"markdown",
+		"pdf",
+		"mcp",
+		"lightning",
+		"conversion",
+		"L402"
+	],
+	"license": "MIT",
+	"type": "module",
+	"author": "Serendipity AI <hello@serendipity.ai> (https://markdown2pdf.ai)",
+	"main": "dist/markdown2pdf_mcp_server.js",
+	"bin": {
+		"markdown2pdf-mcp": "./dist/markdown2pdf_mcp_server.js"
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"categories": [
+		"Other"
+	],
+	"scripts": {
+		"start": "ts-node markdown2pdf_mcp_server.ts",
+		"build": "tsc -p ./ --outDir ./dist",
+		"test": "mocha -r ts-node/register test/**/*.test.ts",
+		"format": "prettier --write '**/*.{ts,json}'",
+		"lint": "eslint . --ext .ts"
+	},
+	"devDependencies": {
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^20.17.48",
+		"@types/node-fetch": "^2.6.12",
+		"@typescript-eslint/eslint-plugin": "^6.0.0",
+		"@typescript-eslint/parser": "^6.0.0",
+		"eslint": "^8.40.0",
+		"mocha": "^11.3.0",
+		"prettier": "^3.0.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.8.2"
+	},
+	"dependencies": {
+		"node-fetch": "^2.7.0"
+	}
+}
