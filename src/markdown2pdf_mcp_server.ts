@@ -80,7 +80,7 @@ async function handleRequest(req: McpRequest): Promise<McpResponse> {
   };
 
   let response;
-  let pollUrl = 'https://intelligence-api-qa.ent.sdy.ai/v1/document/l402/markdown';
+  let pollUrl = 'https://qa.api.markdown2pdf.ai/v1/markdown';
   let headers = { 'Content-Type': 'application/json' };
 
   // Payment loop
@@ -94,16 +94,45 @@ async function handleRequest(req: McpRequest): Promise<McpResponse> {
       
       if (response.status === 402) {
         const resJson = await response.json();
+
+        const payment_request_url = resJson.payment_request_url
+        const payment_context_token = resJson.payment_context_token;
+        const offers = resJson.offers || [];
+        const offer_id = offers.length > 0 ? offers[0].id : null;
+        const offer_amount = offers.length > 0 ? offers[0].amount : null;
+        const offer_currency = offers.length > 0 ? offers[0].currency : null;
+        const description = offers.length > 0 ? offers[0].description : "Markdown to PDF conversion";
+        
+        const payment_request_payload = {
+          payment_context_token: payment_context_token,
+          offer_id: offer_id
+        }
+        
+        let payment_request_response = await fetch(payment_request_url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payment_request_payload)
+        });
+
+        const payment_request_json = await payment_request_response.json();
+        debug("Payment request response: `${payment_request_json}`");
+        debug("Payment request status: `${payment_request_response.status}`");
+        debug("Payment request headers: `${payment_request_response.status}`");
+        debug("Payment request URL: `${payment_request_url}`");
+        debug("Payment request payload: `${payment_request_payload}`");
+        const lightning_invoice = payment_request_json.payment_request.payment_request;
+        const lightning_invoice_qr = payment_request_json.payment_request.payment_qr_svg;
+
         return createResponse(req.id, {
           content: [{
             type: "text",
             text: JSON.stringify({
-              status: "payment_required",
-              qr_svg_url: resJson.payment_qr_svg,
-              payment_request: resJson.payment_request,
-              amount_in_satoshis: resJson.amount_sats,
-              currency: resJson.currency,
-              detail: resJson.detail
+              status: "Payment required. Please pay the invoice and try the same request again to continue.",
+              qr_svg_url: lightning_invoice_qr,
+              payment_request: lightning_invoice,
+              amount: offer_amount,
+              currency: offer_currency,
+              detail: description
             })
           }]
           
@@ -111,7 +140,7 @@ async function handleRequest(req: McpRequest): Promise<McpResponse> {
       } else if (response.status === 200) {
         const resJson = await response.json();
         if (resJson.path) {
-          pollUrl = `https://intelligence-api-qa.ent.sdy.ai${resJson.path}`;
+          pollUrl = resJson.path;
           break;
         }
       } else {
@@ -131,7 +160,7 @@ async function handleRequest(req: McpRequest): Promise<McpResponse> {
       response = await fetch(pollUrl, { method: 'GET', headers });
       const resJson = await response.json();
       if (resJson.status === 'Done' && resJson.path) {
-        pollUrl = `https://intelligence-api-qa.ent.sdy.ai${resJson.path}`;
+        pollUrl = resJson.path;
         break;
       }
       await new Promise(res => setTimeout(res, 3000));
@@ -245,6 +274,18 @@ process.stdin.on('data', async (chunk) => {
         })) + '\n');
         continue;
     }
+
+    if (req.method === 'prompts/get'){
+      if (!req.params?.name || req.params.name !== 'convert_markdown') {
+        process.stdout.write(JSON.stringify(createErrorResponse(req.id, {
+          code: RPC_ERRORS.INVALID_PARAMS.code,
+          message: "Invalid prompt name"
+        })) + '\n');
+        continue;
+      }
+
+    }
+
     if (req.method === 'tools/list') {
       process.stdout.write(JSON.stringify(createResponse(req.id, {
         tools: [{
