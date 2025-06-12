@@ -2,7 +2,7 @@
 	"name": "@serendipityai/markdown2pdf-mcp",
 	"displayName": "MCP client for markdown2pdf.ai",
 	"description": "⚡ MCP client for markdown2pdf.ai - Convert markdown to PDF with Lightning payments",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"homepage": "https://markdown2pdf.ai",
 	"repository": "github:serendipity-ai/markdown2pdf-mcp",
 	"private": false,
