@@ -80,7 +80,7 @@ async function handleRequest(req: McpRequest): Promise<McpResponse> {
   };
 
   let response;
-  let pollUrl = 'https://qa.api.markdown2pdf.ai/v1/markdown';
+  let pollUrl = 'https://api.markdown2pdf.ai/v1/markdown';
   let headers = { 'Content-Type': 'application/json' };
 
   // Payment loop
