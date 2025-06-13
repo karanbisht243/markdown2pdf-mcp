@@ -130,8 +130,6 @@ async function handleRequest(req: McpRequest): Promise<McpResponse> {
               status: "Payment required. Please pay the invoice and try the same request again to continue.",
               qr_svg_url: lightning_invoice_qr,
               payment_request: lightning_invoice,
-              amount: offer_amount,
-              currency: offer_currency,
               detail: description
             })
           }]
